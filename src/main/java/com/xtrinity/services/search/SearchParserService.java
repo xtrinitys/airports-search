@@ -2,6 +2,7 @@ package com.xtrinity.services.search;
 
 import com.xtrinity.Utils;
 import com.xtrinity.dto.UserInputDto;
+import com.xtrinity.entities.Airport;
 import com.xtrinity.entities.search.SearchFilter;
 import com.xtrinity.entities.search.SearchQuery;
 import com.xtrinity.exceptions.WrongFilterSyntaxException;
@@ -70,11 +71,10 @@ public class SearchParserService {
             formatted = formatted.substring(0, formatted.length() - 1);
         }
 
-
         return formatted;
     }
 
-    private static SearchFilter parseFilter(String strFilter, int index) {
+    private static SearchFilter parseFilter(String strFilter, int index) throws WrongFilterSyntaxException {
         SearchFilter filter = new SearchFilter(index);
 
         Pattern singleFilter = Pattern.compile(SINGLE_FILTER_REGEX);
@@ -82,17 +82,34 @@ public class SearchParserService {
 
         while (matcher.find()) {
             int column = Integer.parseInt(matcher.group(1));
+
+            if (column > 14) {
+                throw new WrongFilterSyntaxException("Error: Illegal column " + column);
+            }
             String sign = matcher.group(2);
             String numStrValue = matcher.group(3);
             String strValue = matcher.group(4);
 
-            Number numValue;
+            Number numValue = null;
             if (numStrValue != null) {
                 numValue = Utils.parseNumber(numStrValue);
                 filter.setNumValue(numValue);
             } else {
                 strValue = strValue.replaceAll("'", "");
                 filter.setStrValue(strValue);
+            }
+
+            Class<?> fieldType = Airport.class.getDeclaredFields()[column - 1].getType();
+            if (numStrValue != null && fieldType == String.class) {
+                throw new WrongFilterSyntaxException(
+                        "Inappropriate types of columns, \"" + numValue + "\" to String"
+                );
+            }
+            if (numStrValue == null && (fieldType == Integer.class || fieldType == Double.class)) {
+                throw new WrongFilterSyntaxException(
+                        "Inappropriate types of columns, \"" + strValue + "\" to Number"
+
+                );
             }
 
             filter.setColumn(column);
