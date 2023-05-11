@@ -23,7 +23,7 @@ public class Main {
         SearchService searchService = new SearchService(FILE_PATH);
 
         while (true) {
-            UserInputDto userInput = null;
+            UserInputDto userInput;
             try {
                 userInput = io.getUserInput();
             } catch (WrongInputException e) {

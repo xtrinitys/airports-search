@@ -109,9 +109,9 @@ public class SearchService {
 
     private boolean applyFilter(SearchFilter filter, Airport airport) {
         Method[] airportGetters =
-            Arrays.stream(Airport.class.getDeclaredMethods())
-                    .filter(m -> m.getName().startsWith("get"))
-                    .toArray(Method[]::new);
+                Arrays.stream(Airport.class.getDeclaredMethods())
+                        .filter(m -> m.getName().startsWith("get"))
+                        .toArray(Method[]::new);
 
         int column = filter.getColumn() - 1;
         try {

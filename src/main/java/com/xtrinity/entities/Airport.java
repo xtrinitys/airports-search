@@ -16,7 +16,8 @@ public class Airport {
     private String col13;
     private String col14;
 
-    public Airport() {}
+    public Airport() {
+    }
 
     @Override
     public String toString() {

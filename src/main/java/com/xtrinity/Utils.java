@@ -14,7 +14,7 @@ public class Utils {
         }
         return true;
     }
-    
+
     public static Number parseNumber(String strNumber) {
         Number number = null;
         try {
@@ -25,7 +25,7 @@ public class Utils {
 
         return number;
     }
-    
+
     public static boolean evaluateBySign(String v1, String v2, String sign) {
         int result = v1.compareTo(v2);
         switch (sign) {
