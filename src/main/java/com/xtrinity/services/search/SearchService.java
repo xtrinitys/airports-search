@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,6 +57,8 @@ public class SearchService {
 
         this.lastSearchTime = Duration.between(startTime, endTime).toMillis();
         this.lastSearchTotalRows = airports.size();
+
+        airports.sort(Comparator.comparing(Airport::getCol2));
         result.setAirports(airports);
 
         return result;
