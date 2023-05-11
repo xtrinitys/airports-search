@@ -5,10 +5,6 @@ import com.xtrinity.services.search.SearchService;
 
 import java.io.File;
 
-/*
-TODO: Say it
-    first 2 searches are slow idk
- */
 public class Main {
     private static final String FILE_PATH = System.getProperty("user.dir") + "/src/main/resources/data.csv";
 
