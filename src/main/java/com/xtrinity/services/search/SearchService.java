@@ -1,10 +1,12 @@
 package com.xtrinity.services.search;
 
 import com.xtrinity.Utils;
+import com.xtrinity.dto.UserInputDto;
 import com.xtrinity.entities.Airport;
 import com.xtrinity.entities.search.SearchFilter;
 import com.xtrinity.entities.search.SearchQuery;
 import com.xtrinity.entities.search.SearchResult;
+import com.xtrinity.exceptions.WrongFilterSyntaxException;
 import org.mvel2.MVEL;
 
 import java.io.IOException;
@@ -32,9 +34,10 @@ public class SearchService {
         lastSearchTime = -1;
     }
 
-    public SearchResult searchFor(SearchQuery query) {
-        SearchResult result = new SearchResult();
+    public SearchResult searchFor(UserInputDto userInput) throws WrongFilterSyntaxException {
+        SearchQuery query = SearchParserService.parseQuery(userInput);
 
+        SearchResult result = new SearchResult();
         List<Airport> airports;
 
         Instant startTime, endTime;
@@ -146,7 +149,6 @@ public class SearchService {
                 if (strColumn.equals("\\N")) {
                     airportSetters[i].invoke(airport, (Object) null);
                 } else if (numColumn == null) {
-//                TODO: Still sometimes throws IllegalArgumentException for example on "a" idk
                     airportSetters[i].invoke(airport, strColumn);
                 } else {
 //                    Determine if setter accepts int or double

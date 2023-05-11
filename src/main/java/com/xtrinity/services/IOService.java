@@ -34,7 +34,7 @@ public class IOService {
         return new UserInputDto(rawFilters, rawTitle);
     }
 
-    public void printResults(SearchResult result, long searchDuration, int totalRows) {
+    public void printSearchResults(SearchResult result, long searchDuration, int totalRows) {
         Airport[] airports = result.getAirports().toArray(new Airport[0]);
         for (var airport : airports) {
             if (airport != null) {
