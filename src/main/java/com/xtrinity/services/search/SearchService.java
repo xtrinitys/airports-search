@@ -77,16 +77,15 @@ public class SearchService {
                 .map(filter -> applyFilter(filter, airport))
                 .toArray(Boolean[]::new);
 
-        String resultLogicalExpression = filtersIndexString;
+        String resultStatement = filtersIndexString;
 
         for (int i = 0; i < filtersResults.length; i++) {
             boolean result = filtersResults[i];
 
-            resultLogicalExpression =
-                    resultLogicalExpression.replaceAll(String.valueOf(i), String.valueOf(result));
+            resultStatement = resultStatement.replaceAll(String.valueOf(i), String.valueOf(result));
         }
 
-        return (boolean) MVEL.eval(resultLogicalExpression);
+        return (boolean) MVEL.eval(resultStatement);
     }
 
     private boolean applyFilter(SearchFilter filter, Airport airport) {
