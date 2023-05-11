@@ -137,6 +137,9 @@ public class SearchService {
                         .toArray(Method[]::new);
 
         for (int i = 0; i < airportSetters.length; i++) {
+            Method setter = airportSetters[i];
+            Class<?> setterParameterType = setter.getParameterTypes()[0];
+
             String strColumn = columns[i];
 
             Number numColumn = null;
@@ -147,16 +150,15 @@ public class SearchService {
 
             try {
                 if (strColumn.equals("\\N")) {
-                    airportSetters[i].invoke(airport, (Object) null);
+                    setter.invoke(airport, (Object) null);
                 } else if (numColumn == null) {
-                    airportSetters[i].invoke(airport, strColumn);
+                    setter.invoke(airport, strColumn);
                 } else {
 //                    Determine if setter accepts int or double
-                    Class<?> setterNumberType = airportSetters[i].getParameterTypes()[0];
-                    if (setterNumberType.getName().equals(Integer.class.getName())) {
-                        airportSetters[i].invoke(airport, numColumn.intValue());
+                    if (setterParameterType.getName().equals(Integer.class.getName())) {
+                        setter.invoke(airport, numColumn.intValue());
                     } else {
-                        airportSetters[i].invoke(airport, numColumn.doubleValue());
+                        setter.invoke(airport, numColumn.doubleValue());
                     }
                 }
             } catch (IllegalAccessException | InvocationTargetException e) {
