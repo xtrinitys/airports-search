@@ -1,6 +1,6 @@
 package com.xtrinity.exceptions;
 
-public class WrongInputException extends Exception{
+public class WrongInputException extends AppException {
     public WrongInputException() {
     }
 
@@ -14,9 +14,5 @@ public class WrongInputException extends Exception{
 
     public WrongInputException(Throwable cause) {
         super(cause);
-    }
-
-    public WrongInputException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

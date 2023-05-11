@@ -47,7 +47,7 @@ public class SearchParserService {
 
     private static List<SearchFilter> parseFilters(String rawFilters) throws WrongFilterSyntaxException {
         if (!rawFilters.matches(STRING_FILTER_REGEX)) {
-            throw new WrongFilterSyntaxException();
+            throw new WrongFilterSyntaxException("Error: Filters must be like \\\"column[2]>10&column[5]=’GKA’\\\", try again");
         }
 
         rawFilters = formatRawFilters(rawFilters);

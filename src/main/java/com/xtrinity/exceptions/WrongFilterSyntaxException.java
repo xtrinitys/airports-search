@@ -1,6 +1,6 @@
 package com.xtrinity.exceptions;
 
-public class WrongFilterSyntaxException extends Exception{
+public class WrongFilterSyntaxException extends AppException {
     public WrongFilterSyntaxException() {
     }
 
