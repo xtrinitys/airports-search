@@ -58,30 +58,6 @@ public class SearchService {
         this.lastSearchTotalRows = airports.size();
         result.setAirports(airports);
 
-//        TODO: Bower 30ms
-//        try {
-//            InputStream inputStream = new FileInputStream(FILE_PATH);
-//            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-//
-//            Stream<String> linesStream = bufferedReader.lines();
-//
-//            Instant startTime = Instant.now();
-//            linesStream
-//                    .filter(s -> s.toLowerCase().contains(query.getTitle().toLowerCase()))
-//                    .forEach(rawLine -> {
-//                if (applyTitleFilter(query.getTitle(), rawLine)) {
-//                   airports.add(this.parseAirport(rawLine));
-//                }
-//            });
-//
-//            this.lastSearchTime = Duration.between(startTime, Instant.now()).toMillis();
-//            this.lastSearchTotalRows = airports.size();
-//            result.setAirports(airports);
-//
-//        } catch (FileNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-
         return result;
     }
 
