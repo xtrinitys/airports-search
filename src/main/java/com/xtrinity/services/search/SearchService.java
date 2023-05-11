@@ -44,12 +44,16 @@ public class SearchService {
         try (
                 Stream<String> fileStream = Files.lines(Path.of(FILE_PATH)).parallel()
         ) {
+            Method[]
+                    setters = Airport.reachSetters(),
+                    getters = Airport.reachGetters();
+
             startTime = Instant.now();
 
             airports = fileStream
                     .filter(s -> applyTitleFilter(query.getTitle(), s))
-                    .map(this::parseAirport)
-                    .filter(airport -> applyFilters(query.getFilters(), query.getFiltersIndexString(), airport))
+                    .map((String rawAirport) -> parseAirport(rawAirport, setters))
+                    .filter(airport -> applyFilters(query.getFilters(), query.getFiltersIndexString(), airport, getters))
                     .collect(Collectors.toList());
 
             endTime = Instant.now();
@@ -67,14 +71,14 @@ public class SearchService {
         return result;
     }
 
-    private boolean applyFilters(List<SearchFilter> filters, String filtersIndexString, Airport airport) {
+    private boolean applyFilters(List<SearchFilter> filters, String filtersIndexString, Airport airport, Method[] getters) {
         if (filters == null) {
             return true;
         }
 
         Boolean[] filtersResults = filters
                 .stream()
-                .map(filter -> applyFilter(filter, airport))
+                .map(filter -> applyFilter(filter, airport, getters))
                 .toArray(Boolean[]::new);
 
         String resultStatement = filtersIndexString;
@@ -88,12 +92,7 @@ public class SearchService {
         return (boolean) MVEL.eval(resultStatement);
     }
 
-    private boolean applyFilter(SearchFilter filter, Airport airport) {
-        Method[] airportGetters =
-            Arrays.stream(Airport.class.getDeclaredMethods())
-                    .filter(m -> m.getName().startsWith("get"))
-                    .toArray(Method[]::new);
-
+    private boolean applyFilter(SearchFilter filter, Airport airport, Method[] airportGetters) {
         int column = filter.getColumn() - 1;
         try {
             Method getter = airportGetters[column];
@@ -123,17 +122,12 @@ public class SearchService {
         }
     }
 
-    private Airport parseAirport(String rawAirport) {
+    private Airport parseAirport(String rawAirport, Method[] airportSetters) {
         Airport airport = new Airport();
 
         String[] columns = rawAirport.split(",(?=([^\"]|\"[^\"]*\")*$)");
 
         columns = cleanDoubleQuotes(columns);
-
-        Method[] airportSetters =
-                Arrays.stream(Airport.class.getDeclaredMethods())
-                        .filter(m -> m.getName().startsWith("set"))
-                        .toArray(Method[]::new);
 
         for (int i = 0; i < airportSetters.length; i++) {
             Method setter = airportSetters[i];

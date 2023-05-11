@@ -1,5 +1,10 @@
 package com.xtrinity.entities;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.function.Function;
+
 public class Airport {
     private Integer col1;
     private String col2;
@@ -149,5 +154,24 @@ public class Airport {
 
     public void setCol14(String col14) {
         this.col14 = col14;
+    }
+
+    public static Method[] reachGetters() {
+        return Arrays.stream(Airport.class.getDeclaredMethods())
+                .filter(m -> m.getName().startsWith("get"))
+                .sorted(Airport::methodsComparator)
+                .toArray(Method[]::new);
+    }
+
+    public static Method[] reachSetters() {
+        return Arrays.stream(Airport.class.getDeclaredMethods())
+                .filter(m -> m.getName().startsWith("set"))
+                .sorted(Airport::methodsComparator)
+                .toArray(Method[]::new);
+    }
+
+    private static int methodsComparator(Method method, Method method1) {
+        Function<Method, Integer> getColN = m -> Integer.parseInt(m.getName().replaceAll("\\D", ""));
+        return Integer.compare(getColN.apply(method), getColN.apply(method1));
     }
 }
