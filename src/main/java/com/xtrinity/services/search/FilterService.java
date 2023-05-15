@@ -2,6 +2,8 @@ package com.xtrinity.services.search;
 
 import com.xtrinity.Utils;
 import com.xtrinity.entities.airport.Airport;
+import com.xtrinity.entities.airport.AirportApi;
+import com.xtrinity.dto.FiltersDto;
 import com.xtrinity.entities.search.SearchFilter;
 import org.mvel2.MVEL;
 
@@ -12,7 +14,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FilterService {
-    public boolean applyFilters(List<SearchFilter> filters, String filtersIndexString, Airport airport, Method[] getters) {
+    public boolean applyFilters(FiltersDto filtersDto, Airport airport) {
+        List<SearchFilter> filters = filtersDto.getFilters();
+        String filtersIndexString = filtersDto.getFiltersIndexString();
+
+        Method[] getters = AirportApi.reachGetters();
+
         if (filters == null) {
             return true;
         }

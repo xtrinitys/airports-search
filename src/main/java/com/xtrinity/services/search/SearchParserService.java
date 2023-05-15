@@ -3,6 +3,7 @@ package com.xtrinity.services.search;
 import com.xtrinity.Utils;
 import com.xtrinity.dto.UserInputDto;
 import com.xtrinity.entities.airport.Airport;
+import com.xtrinity.entities.airport.AirportApi;
 import com.xtrinity.entities.search.SearchFilter;
 import com.xtrinity.entities.search.SearchQuery;
 import com.xtrinity.exceptions.WrongFilterSyntaxException;
@@ -37,8 +38,9 @@ public class SearchParserService {
         return query;
     }
 
-    public Airport parseAirport(String rawAirport, Method[] airportSetters) {
+    public Airport parseAirport(String rawAirport) {
         Airport airport = new Airport();
+        Method[] airportSetters = AirportApi.reachGetters();
 
         String[] columns = rawAirport.split(",(?=([^\"]|\"[^\"]*\")*$)");
 

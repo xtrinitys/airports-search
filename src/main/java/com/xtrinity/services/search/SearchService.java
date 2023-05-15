@@ -2,13 +2,12 @@ package com.xtrinity.services.search;
 
 import com.xtrinity.dto.UserInputDto;
 import com.xtrinity.entities.airport.Airport;
-import com.xtrinity.entities.airport.AirportApi;
+import com.xtrinity.dto.FiltersDto;
 import com.xtrinity.entities.search.SearchQuery;
 import com.xtrinity.entities.search.SearchResult;
 import com.xtrinity.exceptions.WrongFilterSyntaxException;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -45,16 +44,14 @@ public class SearchService {
         try (
                 Stream<String> fileStream = Files.lines(Path.of(FILE_PATH)).parallel()
         ) {
-            Method[]
-                    setters = AirportApi.reachSetters(),
-                    getters = AirportApi.reachGetters();
+            FiltersDto filters = new FiltersDto(query.getFilters(), query.getFiltersIndexString());
 
             startTime = Instant.now();
 
             airports = fileStream
                     .filter(s -> filterService.applyTitleFilter(query.getTitle(), s))
-                    .map((String rawAirport) -> parserService.parseAirport(rawAirport, setters))
-                    .filter(airport -> filterService.applyFilters(query.getFilters(), query.getFiltersIndexString(), airport, getters))
+                    .map(parserService::parseAirport)
+                    .filter(airport -> filterService.applyFilters(filters, airport))
                     .collect(Collectors.toList());
 
             endTime = Instant.now();
