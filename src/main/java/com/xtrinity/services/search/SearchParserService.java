@@ -40,7 +40,7 @@ public class SearchParserService {
 
     public Airport parseAirport(String rawAirport) {
         Airport airport = new Airport();
-        Method[] airportSetters = AirportApi.reachGetters();
+        Method[] airportSetters = AirportApi.reachSetters();
 
         String[] columns = rawAirport.split(",(?=([^\"]|\"[^\"]*\")*$)");
 
