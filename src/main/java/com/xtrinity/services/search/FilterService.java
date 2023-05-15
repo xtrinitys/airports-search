@@ -8,6 +8,8 @@ import org.mvel2.MVEL;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FilterService {
     public boolean applyFilters(List<SearchFilter> filters, String filtersIndexString, Airport airport, Method[] getters) {
@@ -59,5 +61,14 @@ public class FilterService {
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean applyTitleFilter(String queryTitle, String rawAirport) {
+        Matcher matcher = Pattern.compile("\"(.+?)\"").matcher(rawAirport);
+
+        //noinspection ResultOfMethodCallIgnored
+        matcher.find();
+
+        return matcher.group(1).toLowerCase().startsWith(queryTitle.toLowerCase());
     }
 }

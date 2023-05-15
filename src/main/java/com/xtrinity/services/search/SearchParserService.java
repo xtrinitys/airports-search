@@ -7,6 +7,8 @@ import com.xtrinity.entities.search.SearchFilter;
 import com.xtrinity.entities.search.SearchQuery;
 import com.xtrinity.exceptions.WrongFilterSyntaxException;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -17,14 +19,14 @@ public class SearchParserService {
     private final static String STRING_FILTER_REGEX = "(\\(*column\\[([1-9]\\d*)](<|=|>|<>)(?:(\\d+)|('\\w+'))(?:&|\\|\\|)*\\)*(?:&|\\|\\|)*)+";
     private final static String SINGLE_FILTER_REGEX = "(?:column\\[([1-9]\\d*)](<|=|>|<>)(?:(\\d+)|('\\w+')))+?";
 
-    public static SearchQuery parseQuery(UserInputDto userInput) throws WrongFilterSyntaxException {
+    public SearchQuery parseQuery(UserInputDto userInput) throws WrongFilterSyntaxException {
         SearchQuery query = new SearchQuery(userInput.getRawTitle());
 
         if (!userInput.getRawFilters().isBlank()) {
-            List<SearchFilter> filters = SearchParserService.parseFilters(
+            List<SearchFilter> filters = this.parseFilters(
                     userInput.getRawFilters()
             );
-            String filtersIndexString = SearchParserService.getIndexedFilters(
+            String filtersIndexString = this.getIndexedFilters(
                     userInput.getRawFilters()
             );
 
@@ -35,7 +37,47 @@ public class SearchParserService {
         return query;
     }
 
-    private static String getIndexedFilters(String rawFilters) {
+    public Airport parseAirport(String rawAirport, Method[] airportSetters) {
+        Airport airport = new Airport();
+
+        String[] columns = rawAirport.split(",(?=([^\"]|\"[^\"]*\")*$)");
+
+        columns = Utils.cleanDoubleQuotes(columns);
+
+        for (int i = 0; i < airportSetters.length; i++) {
+            Method setter = airportSetters[i];
+            Class<?> setterParameterType = setter.getParameterTypes()[0];
+
+            String strColumn = columns[i];
+
+            Number numColumn = null;
+
+            if (Utils.isNumeric(strColumn)) {
+                numColumn = Utils.parseNumber(strColumn);
+            }
+
+            try {
+                if (strColumn.equals("\\N")) {
+                    setter.invoke(airport, (Object) null);
+                } else if (numColumn == null) {
+                    setter.invoke(airport, strColumn);
+                } else {
+//                    Determine if setter accepts int or double
+                    if (setterParameterType.getName().equals(Integer.class.getName())) {
+                        setter.invoke(airport, numColumn.intValue());
+                    } else {
+                        setter.invoke(airport, numColumn.doubleValue());
+                    }
+                }
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return airport;
+    }
+
+    private String getIndexedFilters(String rawFilters) {
         String formatted = rawFilters.replaceAll("&", "&&");
 
         Pattern singleFilter = Pattern.compile(SINGLE_FILTER_REGEX);
@@ -46,7 +88,7 @@ public class SearchParserService {
         return matcher.replaceAll(matchResult -> String.valueOf(index.getAndIncrement()));
     }
 
-    private static List<SearchFilter> parseFilters(String rawFilters) throws WrongFilterSyntaxException {
+    private List<SearchFilter> parseFilters(String rawFilters) throws WrongFilterSyntaxException {
         if (!rawFilters.matches(STRING_FILTER_REGEX)) {
             throw new WrongFilterSyntaxException("Error: Filters must be like \\\"column[2]>10&column[5]=’GKA’\\\", try again");
         }
@@ -64,7 +106,7 @@ public class SearchParserService {
         return list;
     }
 
-    private static String formatRawFilters(String rawFilters) {
+    private String formatRawFilters(String rawFilters) {
         String formatted = rawFilters.strip();
 
         if (formatted.endsWith("&")) {
@@ -74,7 +116,7 @@ public class SearchParserService {
         return formatted;
     }
 
-    private static SearchFilter parseFilter(String strFilter, int index) throws WrongFilterSyntaxException {
+    private SearchFilter parseFilter(String strFilter, int index) throws WrongFilterSyntaxException {
         SearchFilter filter = new SearchFilter(index);
 
         Pattern singleFilter = Pattern.compile(SINGLE_FILTER_REGEX);

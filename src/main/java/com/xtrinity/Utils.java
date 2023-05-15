@@ -1,5 +1,6 @@
 package com.xtrinity;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Utils {
@@ -61,5 +62,14 @@ public class Utils {
 
     public static boolean evaluateBySign(Integer v1, Integer v2, String sign) {
         return evaluateBySign(Double.valueOf(v1), Double.valueOf(v2), sign);
+    }
+
+    public static String[] cleanDoubleQuotes(String[] strings) {
+        return Arrays.stream(strings).map(s -> {
+            if (s.startsWith("\"") && s.endsWith("\"")) {
+                return s.substring(1, s.length() - 1);
+            }
+            return s;
+        }).toArray(String[]::new);
     }
 }
