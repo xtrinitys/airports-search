@@ -2,7 +2,7 @@ package com.xtrinity.services.search;
 
 import com.xtrinity.Utils;
 import com.xtrinity.dto.UserInputDto;
-import com.xtrinity.entities.Airport;
+import com.xtrinity.entities.airport.Airport;
 import com.xtrinity.entities.search.SearchFilter;
 import com.xtrinity.entities.search.SearchQuery;
 import com.xtrinity.exceptions.WrongFilterSyntaxException;

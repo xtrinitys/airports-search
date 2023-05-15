@@ -1,6 +1,6 @@
 package com.xtrinity.entities.search;
 
-import com.xtrinity.entities.Airport;
+import com.xtrinity.entities.airport.Airport;
 
 import java.util.List;
 

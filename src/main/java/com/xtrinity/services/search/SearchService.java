@@ -2,7 +2,8 @@ package com.xtrinity.services.search;
 
 import com.xtrinity.Utils;
 import com.xtrinity.dto.UserInputDto;
-import com.xtrinity.entities.Airport;
+import com.xtrinity.entities.airport.Airport;
+import com.xtrinity.entities.airport.AirportApi;
 import com.xtrinity.entities.search.SearchFilter;
 import com.xtrinity.entities.search.SearchQuery;
 import com.xtrinity.entities.search.SearchResult;
@@ -45,8 +46,8 @@ public class SearchService {
                 Stream<String> fileStream = Files.lines(Path.of(FILE_PATH)).parallel()
         ) {
             Method[]
-                    setters = Airport.reachSetters(),
-                    getters = Airport.reachGetters();
+                    setters = AirportApi.reachSetters(),
+                    getters = AirportApi.reachGetters();
 
             startTime = Instant.now();
 

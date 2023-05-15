@@ -1,7 +1,7 @@
 package com.xtrinity.services;
 
 import com.xtrinity.dto.UserInputDto;
-import com.xtrinity.entities.Airport;
+import com.xtrinity.entities.airport.Airport;
 import com.xtrinity.entities.search.SearchResult;
 import com.xtrinity.exceptions.WrongInputException;
 
